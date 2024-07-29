@@ -66,13 +66,15 @@ const (
 	FORWARDING_PARAMETER_OUTER_HEADER_CREATION = iota + 1
 	FORWARDING_PARAMETER_FORWARDING_POLICY
 	FORWARDING_PARAMETER_PFCPSM_REQ_FLAGS
+	FORWARDING_PARAMETER_DESTINATION_INTERFACE
 	FORWARDING_PARAMETER_TOS_TC
 )
 
 type ForwardParam struct {
-	Creation *HeaderCreation
-	Policy   *string
-	TosTc    uint8
+	Creation  *HeaderCreation
+	Policy    *string
+	TosTc     uint8
+	Interface *uint8
 }
 
 func DecodeForwardParam(b []byte) (ForwardParam, error) {
@@ -93,6 +95,9 @@ func DecodeForwardParam(b []byte) (ForwardParam, error) {
 		case FORWARDING_PARAMETER_FORWARDING_POLICY:
 			s, _, _ := nl.DecodeAttrString(b[n:attrLen])
 			param.Policy = &s
+		case FORWARDING_PARAMETER_DESTINATION_INTERFACE:
+			v := uint8(b[n])
+			param.Interface = &v
 		case FORWARDING_PARAMETER_TOS_TC:
 			param.TosTc = b[n]
 		}
